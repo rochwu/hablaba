@@ -63,9 +63,33 @@ export const Playback = () => {
     }
   }, [audioSource]);
 
-  if (audioSource) {
-    return <audio ref={ref} autoPlay src={audioSource} />;
-  } else {
-    return <></>;
-  }
+  useEffect(() => {
+    const audio = ref.current;
+
+    if (audio) {
+      audio.addEventListener('loadeddata', () => {
+        audio.play();
+      });
+    }
+  }, []);
+
+  const handleTimeUpdate = () => {
+    const audio = ref.current;
+
+    if (audio) {
+      const {currentTime, duration} = audio;
+      const rawPercent = (currentTime / duration) * 100;
+      const percent = rawPercent.toFixed(0);
+
+      console.warn(currentTime, duration, percent);
+    }
+  };
+
+  return <audio ref={ref} src={audioSource} onTimeUpdate={handleTimeUpdate} />;
+
+  // if (audioSource) {
+  //   return <audio ref={ref} autoPlay src={audioSource} />;
+  // } else {
+  //   return <></>;
+  // }
 };
