@@ -24,13 +24,17 @@ export const RecorderProvider: FC<{recorder: MediaRecorder}> = ({
 
   const effects = {
     stop: () => {
-      recorder.stop();
-      dispatch(actions.stop(Date.now() - ellapsed.current));
+      if (recorder.state !== 'inactive') {
+        recorder.stop();
+        dispatch(actions.stop(Date.now() - ellapsed.current));
+      }
     },
     start: () => {
-      recorder.start();
-      ellapsed.current = Date.now();
-      dispatch(actions.start());
+      if (recorder.state !== 'recording') {
+        recorder.start();
+        ellapsed.current = Date.now();
+        dispatch(actions.start());
+      }
     },
   };
 

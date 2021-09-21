@@ -3,7 +3,7 @@ import {Provider} from 'react-redux';
 
 import {store} from './state';
 
-import {Loader} from './Loader';
+import Loader from './Loader';
 
 const rootElement = document.getElementById('root');
 

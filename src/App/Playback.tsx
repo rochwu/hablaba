@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 
 import {actions, selectAudioSource, useAppDispatch} from '../state';
 
-import {SwipeDirection, useSwipe} from './useSwipe';
+import {SwipeDirection, useSwipe} from '../useSwipe';
 
 export const Playback = () => {
   const audioSource = useSelector(selectAudioSource);

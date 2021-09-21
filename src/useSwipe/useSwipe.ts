@@ -2,10 +2,9 @@ import {useEffect, useRef} from 'react';
 
 import {throttle} from 'lodash';
 
-export type SwipeDirection = 'up' | 'right' | 'down' | 'left';
+import {SwipeHandler} from './types';
 
-type SwipeHandler = (direction: SwipeDirection) => void;
-
+// TODO: touchstart/move/end for iOS
 export const useSwipe = (handler: SwipeHandler, wait: number = 333) => {
   const callback = useRef(handler);
   const waitInitOnly = useRef(wait);

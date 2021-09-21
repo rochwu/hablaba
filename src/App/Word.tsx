@@ -5,14 +5,14 @@ import {selectWord} from '../state';
 
 const Display = styled.span({
   fontSize: `4em`,
-  fontWeight: 'bold'
+  fontWeight: 'bold',
 });
 
 const Container = styled.div({
   display: 'flex',
   justifyContent: 'center',
   marginTop: `2em`,
-  marginBottom: `1em`,
+  marginBottom: `7px`,
 });
 
 export const Word = () => {

@@ -8,7 +8,7 @@ import {selectIsRecording} from '../state';
 const Container = styled.div({
   position: 'absolute',
   top: '7px',
-  right: '7px',
+  right: '14px',
 });
 
 const Icon = styled(SiAudiomack)({
