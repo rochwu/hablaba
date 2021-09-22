@@ -1,11 +1,10 @@
-// "state" lol, global variables
-
 import {MutableRefObject} from 'react';
 
 import {SwipeDirection, SwipeHandler} from './types';
 
 type Callback = MutableRefObject<SwipeHandler>;
 
+// "state" lol, global variables
 const subscribers: Callback[] = [];
 
 export const unsubscribe = (callback: Callback) => {

@@ -9,6 +9,6 @@ export type Lists = {
 export type State = Lists & {
   isRecording: boolean;
   audioSource: string;
-  duration?: number;
+  duration: number;
   subject: ListType;
 };

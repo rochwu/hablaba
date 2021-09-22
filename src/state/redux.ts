@@ -9,6 +9,7 @@ import {State} from './types';
 const initialState: State = {
   isRecording: false,
   audioSource: '',
+  duration: 0,
   subject: 'remaining',
   remaining: [], // These lists are set on configureState
   passed: [],
@@ -22,6 +23,7 @@ const slice = createSlice({
     start: (state) => {
       state.isRecording = true;
       state.audioSource = '';
+      state.duration = 0;
     },
     stop: (state, {payload: duration}: PayloadAction<number>) => {
       state.isRecording = false;
@@ -60,6 +62,7 @@ export const selectFailedList = ({failed}: State) => failed;
 export const selectWord = (state: State) => state[state.subject][0];
 export const selectAudioSource = ({audioSource}: State) => audioSource;
 export const selectIsRecording = ({isRecording}: State) => isRecording;
+export const selectDuration = ({duration}: State) => duration;
 
 export const {actions} = slice;
 
