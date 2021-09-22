@@ -6,8 +6,6 @@ import {actions, useAppDispatch} from './state';
 import {RecorderProvider} from './RecorderProvider';
 import {App} from './App';
 
-const MIME_TYPE = 'audio/webm;codecs=opus';
-
 const Container = styled.div({
   aspectRatio: '9 / 16',
   height: '100vh', // Used to enforce aspect ratio
@@ -33,6 +31,9 @@ export const Loader = () => {
   const [recorder, setRecorder] = useState<MediaRecorder | undefined>();
   const [loaded, setLoaded] = useState(false);
 
+  // TODO: Feature checks when I am less lazy
+  const hasChrome = navigator.userAgent.indexOf('Chrome') !== -1;
+
   useEffect(() => {
     try {
       navigator.mediaDevices
@@ -40,14 +41,6 @@ export const Loader = () => {
         .then((stream) => {
           // Don't use `mimeType` iOS Chrome doesn't like it
           const recorder = new MediaRecorder(stream);
-
-          recorder.ondataavailable = ({data}) => {
-            const audioSource = window.URL.createObjectURL(
-              new Blob([data], {type: MIME_TYPE}),
-            );
-
-            dispatch(actions.save(audioSource));
-          };
 
           setRecorder(recorder);
         })
@@ -69,7 +62,7 @@ export const Loader = () => {
 
   // TODO: Finish the three states here, I'd like to make a loading screen
   if (loaded) {
-    if (recorder) {
+    if (hasChrome && recorder) {
       return (
         <RecorderProvider recorder={recorder}>
           <App />

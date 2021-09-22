@@ -1,4 +1,5 @@
-import {createContext, FC, useContext, useRef} from 'react';
+import {createContext, FC, useContext, useEffect, useRef} from 'react';
+
 import {actions, useAppDispatch} from './state';
 
 type Type = {
@@ -6,6 +7,8 @@ type Type = {
   stop: () => void;
   recorder: MediaRecorder;
 };
+
+const MIME_TYPE = 'audio/webm;codecs=opus';
 
 const RecorderContext = createContext<Type>({} as any);
 
@@ -26,13 +29,13 @@ export const RecorderProvider: FC<{recorder: MediaRecorder}> = ({
     stop: () => {
       if (recorder.state !== 'inactive') {
         recorder.stop();
-        dispatch(actions.stop(Date.now() - ellapsed.current));
+        dispatch(actions.stop(performance.now() - ellapsed.current));
       }
     },
     start: () => {
       if (recorder.state !== 'recording') {
         recorder.start();
-        ellapsed.current = Date.now();
+        ellapsed.current = performance.now();
         dispatch(actions.start());
       }
     },
@@ -88,6 +91,16 @@ export const RecorderProvider: FC<{recorder: MediaRecorder}> = ({
   const stop = () => {
     controller('stop');
   };
+
+  useEffect(() => {
+    recorder.ondataavailable = ({data}) => {
+      const audioSource = window.URL.createObjectURL(
+        new Blob([data], {type: MIME_TYPE}),
+      );
+
+      dispatch(actions.save(audioSource));
+    };
+  }, [recorder, dispatch]);
 
   const context = {
     start,

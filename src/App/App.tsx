@@ -3,8 +3,7 @@ import styled from '@emotion/styled';
 import {useKeyEffect} from './useKeyEffect';
 import {useBrowserOverrides} from './useBrowserOverrides';
 
-import {Word} from './Word';
-import {Playback} from './Playback';
+import {Player} from './Player';
 import {System} from './System';
 import {REC} from './REC';
 import {Instructions} from './Instructions';
@@ -24,9 +23,8 @@ export const App = () => {
     <>
       <Container>
         <REC />
-        <Word />
+        <Player />
         <Progress />
-        <Playback />
         <Instructions />
       </Container>
       <System />

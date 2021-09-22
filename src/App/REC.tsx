@@ -40,7 +40,7 @@ export const REC = () => {
             .to((x) => `scale(${x})`),
         }}
       >
-        <Icon style={{color: isRecording ? 'IndianRed' : 'lightGray'}} />
+        <Icon style={{color: isRecording ? 'IndianRed' : '#fdfdfd'}} />
       </animated.div>
     </Container>
   );

@@ -58,6 +58,7 @@ export const Instructions = () => {
           </>
         )}
       </Instruction>
+      <Divider />
       <Instruction {...hasAudioProps}>
         <MdCheck />
         &nbsp;
