@@ -14,6 +14,14 @@ const initialState: State = {
   remaining: [], // These lists are set on configureState
   passed: [],
   failed: [],
+  status: 'ready',
+};
+
+const changeSubject = (subject: State['subject']) => {
+  return (state: State) => {
+    state.subject = subject;
+    state[subject] = shuffle(state[subject]);
+  };
 };
 
 const slice = createSlice({
@@ -50,6 +58,22 @@ const slice = createSlice({
     save: (state, {payload: audioSource}: PayloadAction<string>) => {
       state.audioSource = audioSource;
     },
+    doFailedList: changeSubject('failed'),
+    doPassedList: changeSubject('passed'),
+    doRemainingList: changeSubject('remaining'),
+    resetLists: (state) => {
+      state.subject = 'remaining';
+      state.remaining = shuffle([
+        ...state.remaining,
+        ...state.failed,
+        ...state.passed,
+      ]);
+      state.passed = [];
+      state.failed = [];
+    },
+    changeStatus: (state, {payload}: PayloadAction<State['status']>) => {
+      state.status = payload;
+    },
   },
 });
 
@@ -63,6 +87,11 @@ export const selectWord = (state: State) => state[state.subject][0];
 export const selectAudioSource = ({audioSource}: State) => audioSource;
 export const selectIsRecording = ({isRecording}: State) => isRecording;
 export const selectDuration = ({duration}: State) => duration;
+
+export const selectStatus = ({status}: State) => status;
+export const selectIsReady = ({status}: State) => status === 'ready';
+export const selectIsCompleted = ({status}: State) => status === 'completed';
+export const selectIsSettings = ({status}: State) => status === 'settings';
 
 export const {actions} = slice;
 
