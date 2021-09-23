@@ -8,13 +8,18 @@ import {
 } from '../state';
 import {setLists} from '../storage';
 
+// So far it's only auto save but still
 export const System = () => {
   const remaining = useSelector(selectRemainingList);
   const passed = useSelector(selectPassedList);
   const failed = useSelector(selectFailedList);
 
   useEffect(() => {
-    setLists({remaining, passed, failed});
+    setLists({
+      remaining,
+      passed,
+      failed,
+    });
   }, [remaining, passed, failed]);
 
   return <></>;

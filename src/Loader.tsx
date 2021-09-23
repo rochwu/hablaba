@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import styled from '@emotion/styled';
 
-import {actions, useAppDispatch} from './state';
+import {useAppDispatch} from './state';
 
 import {RecorderProvider} from './RecorderProvider';
 import {App} from './App';
@@ -10,9 +10,10 @@ const Container = styled.div({
   aspectRatio: '9 / 16',
   height: '100vh', // Used to enforce aspect ratio
   margin: `0 auto`,
+  backgroundColor: 'white', // TODO: Maybe think about night mode
 });
 
-const Loading = () => {
+const LoadFailed = () => {
   return (
     <div style={{margin: '1em'}}>
       <span>
@@ -25,7 +26,7 @@ const Loading = () => {
   );
 };
 
-export const Loader = () => {
+const MediaLoader = () => {
   const dispatch = useAppDispatch();
 
   const [recorder, setRecorder] = useState<MediaRecorder | undefined>();
@@ -69,17 +70,17 @@ export const Loader = () => {
         </RecorderProvider>
       );
     } else {
-      return <Loading />;
+      return <LoadFailed />;
     }
   }
 
   return <></>;
 };
 
-export default () => {
+export const Loader = () => {
   return (
     <Container>
-      <Loader />
+      <MediaLoader />
     </Container>
   );
 };

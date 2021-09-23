@@ -1,20 +1,23 @@
 import {useEffect} from 'react';
 
 import {useRecorder} from '../RecorderProvider';
+import {selectIsReady} from '../state';
+import {useRefSelector} from '../useRefSelector';
 
-export const useKeyEffect = () => {
+export const useKeyListener = () => {
   const {start, stop} = useRecorder();
+  const canRecord = useRefSelector(selectIsReady);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === ' ') {
+      if (canRecord.current && event.key === ' ') {
         event.preventDefault(); // Scrolls
         start();
       }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.key === ' ') {
+      if (canRecord.current && event.key === ' ') {
         event.preventDefault(); // Scrolls
         stop();
       }
@@ -27,5 +30,5 @@ export const useKeyEffect = () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
     };
-  }, [start, stop]);
+  }, [canRecord, start, stop]);
 };

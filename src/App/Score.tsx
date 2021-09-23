@@ -29,7 +29,7 @@ const Divider = styled.span({
   width: '2px',
 });
 
-export const Progress = () => {
+export const Score = () => {
   const passedList = useSelector(selectPassedList);
   const failedList = useSelector(selectFailedList);
 

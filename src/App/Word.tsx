@@ -49,7 +49,7 @@ export const AnimatedWord = ({percent}: {percent: number}) => {
     api.start(toStyle());
   }
 
-  return <AnimatedText style={style}>{word}</AnimatedText>;
+  return <AnimatedText style={style}>{word || <>&nbsp;</>}</AnimatedText>;
 };
 
 export const Word = ({audioRef}: {audioRef: RefObject<HTMLAudioElement>}) => {
@@ -62,19 +62,26 @@ export const Word = ({audioRef}: {audioRef: RefObject<HTMLAudioElement>}) => {
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
 
+    // When a new source is fed, currentTime is changed to 0 and thus "change"
+    // To ignore this, we check for the proper ready state
     if (audio) {
-      const {currentTime, duration: accurateDuration} = audio;
-      // Sometimes the API is unable to return duration, so we use the one on redux
-      const duration = Number.isFinite(accurateDuration)
-        ? accurateDuration
-        : inaccurateDuration.current;
+      if (audio.readyState !== 0) {
+        const {currentTime, duration: accurateDuration} = audio;
+        // Sometimes the API is unable to return duration, so we use the one on redux
+        const duration = Number.isFinite(accurateDuration)
+          ? accurateDuration
+          : inaccurateDuration.current;
 
-      const rawPercent = (currentTime / duration) * 100;
-      setPercent(rawPercent);
+        const rawPercent = (currentTime / duration) * 100;
+
+        setPercent(rawPercent);
+      } else {
+        setPercent(100);
+      }
     }
   }, [audioRef]);
 
-  // Since we sometimes use inaccurate duration, we need to force 100% by ended
+  // Since we sometimes use inaccurate duration, we need to force 100% when ended
   const handleEnded = useCallback(() => {
     setPercent(100);
   }, []);

@@ -5,7 +5,6 @@ import {actions, useAppDispatch} from './state';
 type Type = {
   start: () => void;
   stop: () => void;
-  recorder: MediaRecorder;
 };
 
 const MIME_TYPE = 'audio/webm;codecs=opus';
@@ -105,7 +104,6 @@ export const RecorderProvider: FC<{recorder: MediaRecorder}> = ({
   const context = {
     start,
     stop,
-    recorder,
   };
 
   return (

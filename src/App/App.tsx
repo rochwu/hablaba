@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 
-import {useKeyEffect} from './useKeyEffect';
+import {useKeyListener} from './useKeyListener';
 import {useBrowserOverrides} from './useBrowserOverrides';
 
 import {Player} from './Player';
 import {System} from './System';
 import {REC} from './REC';
 import {Instructions} from './Instructions';
-import {Progress} from './Progress';
+import {Score} from './Score';
+import {Settings} from './Settings';
 
 const Container = styled.div({
   display: 'flex',
@@ -17,14 +18,15 @@ const Container = styled.div({
 
 export const App = () => {
   useBrowserOverrides();
-  useKeyEffect();
+  useKeyListener();
 
   return (
     <>
       <Container>
+        <Settings />
         <REC />
         <Player />
-        <Progress />
+        <Score />
         <Instructions />
       </Container>
       <System />

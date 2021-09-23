@@ -1,13 +1,19 @@
 import {useCallback, useEffect, useRef} from 'react';
 import {useSelector} from 'react-redux';
 
-import {actions, selectAudioSource, useAppDispatch} from '../state';
+import {
+  actions,
+  selectAudioSource,
+  selectCompleted,
+  useAppDispatch,
+} from '../state';
 
 import {SwipeDirection, useSwipe} from '../useSwipe';
 import {Word} from './Word';
 
 export const Player = () => {
   const audioSource = useSelector(selectAudioSource);
+
   const dispatch = useAppDispatch();
 
   // Prevents multiple dispatches since wheel events are sensitive
@@ -16,45 +22,35 @@ export const Player = () => {
 
   const ref = useRef<HTMLAudioElement>(null);
 
-  const replay = useCallback(() => {
-    const audio = ref.current;
-
-    if (audio) {
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.currentTime = 0;
-      }
-    }
-  }, []);
-  const pass = useCallback(() => dispatch(actions.pass()), [dispatch]);
-  const fail = useCallback(() => dispatch(actions.fail()), [dispatch]);
-
   const handleSwipe = useCallback(
     (direction: SwipeDirection) => {
-      if (disabled.current) {
-        return;
-      }
+      if (!disabled.current) {
+        switch (direction) {
+          case 'left': {
+            dispatch(actions.fail());
+            return;
+          }
+          case 'right': {
+            dispatch(actions.pass());
+            return;
+          }
+          case 'up': {
+            const audio = ref.current;
 
-      switch (direction) {
-        case 'left': {
-          fail();
-          return;
-        }
-        case 'right': {
-          pass();
-          return;
-        }
-        case 'up': {
-          replay();
-          return;
-        }
-        case 'down': {
-          return;
+            if (audio) {
+              if (audio.paused) {
+                audio.play();
+              } else {
+                audio.currentTime = 0;
+              }
+            }
+
+            return;
+          }
         }
       }
     },
-    [fail, pass, replay],
+    [dispatch],
   );
 
   useSwipe(handleSwipe);
@@ -62,7 +58,7 @@ export const Player = () => {
   useEffect(() => {
     const audio = ref.current;
 
-    // TODO: disable autoplay on mobile
+    // TODO: disable autoplay on mobile, I mean it's disabled, but disable the code
     if (audio) {
       const autoplay = () => {
         audio.play();
