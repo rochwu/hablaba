@@ -135,7 +135,7 @@ const Beat = () => {
   return (
     <>
       <Instruction>
-        <CgCrown style={{backgroundColor: 'yellow', borderRadius: '1px'}} />
+        <CgCrown style={{backgroundColor: 'yellow', borderRadius: '1px'}} />{' '}
         <Subject>finished!</Subject>
       </Instruction>
       <BigDivider />
@@ -149,9 +149,7 @@ const Beat = () => {
         </>
       )}
       <Instruction>
-        <MdUpdate />
-        <Subject>swipe up</Subject>
-        <span>to restart</span>
+        <MdUpdate /> <Subject>swipe up</Subject> to restart
       </Instruction>
       {!!passed && (
         <>
@@ -190,7 +188,7 @@ const Settings = () => {
         return;
       }
       case 'up': {
-        if (!passed && !failed) {
+        if (failed || passed) {
           dispatch(actions.resetLists());
         }
         return;

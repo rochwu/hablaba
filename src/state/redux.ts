@@ -21,6 +21,7 @@ const changeSubject = (subject: State['subject']) => {
   return (state: State) => {
     state.subject = subject;
     state[subject] = shuffle(state[subject]);
+    state.status = 'ready';
   };
 };
 
@@ -70,6 +71,7 @@ const slice = createSlice({
       ]);
       state.passed = [];
       state.failed = [];
+      state.status = 'ready';
     },
     changeStatus: (state, {payload}: PayloadAction<State['status']>) => {
       state.status = payload;
