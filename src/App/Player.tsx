@@ -4,15 +4,17 @@ import {useSelector} from 'react-redux';
 import {
   actions,
   selectAudioSource,
-  selectCompleted,
+  selectIsReady,
   useAppDispatch,
 } from '../state';
+import {useRefSelector} from '../useRefSelector';
 
 import {SwipeDirection, useSwipe} from '../useSwipe';
 import {Word} from './Word';
 
 export const Player = () => {
   const audioSource = useSelector(selectAudioSource);
+  const ready = useRefSelector(selectIsReady);
 
   const dispatch = useAppDispatch();
 
@@ -24,7 +26,7 @@ export const Player = () => {
 
   const handleSwipe = useCallback(
     (direction: SwipeDirection) => {
-      if (!disabled.current) {
+      if (ready.current && !disabled.current) {
         switch (direction) {
           case 'left': {
             dispatch(actions.fail());
@@ -50,7 +52,7 @@ export const Player = () => {
         }
       }
     },
-    [dispatch],
+    [ready, dispatch],
   );
 
   useSwipe(handleSwipe);

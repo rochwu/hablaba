@@ -1,12 +1,16 @@
-import {useRef, MutableRefObject} from 'react';
+import {useRef} from 'react';
 import {useSelector} from 'react-redux';
 
-export const useRefSelector = <S = any, R = any>(
-  selector: (state: S) => R,
-): MutableRefObject<R> => {
-  const state = useSelector(selector);
-  const ref = useRef(state);
-  ref.current = state;
+/**
+ * Could be dangerous, this doesn't update the component ever
+ */
+export const useRefSelector = <S = any, R = any>(selector: (state: S) => R) => {
+  const ref = useRef<R>(undefined as never);
+
+  useSelector((state: S) => {
+    ref.current = selector(state);
+    return;
+  });
 
   return ref;
 };

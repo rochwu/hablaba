@@ -60,17 +60,22 @@ const BigDivider = styled.div({
   marginTop: '1em',
 });
 
+const getDisableProps = (condition: any) => {
+  if (!condition) {
+    return {
+      style: {
+        color: `#f4f4f4`,
+      },
+      'aria-hidden': true,
+    };
+  }
+};
+
 const Playing = () => {
   const hasAudio = !!useSelector(selectAudioSource);
   const isRecording = useSelector(selectIsRecording);
 
-  const hasAudioProps = !hasAudio
-    ? {
-        style: {
-          visibility: 'hidden',
-        } as CSSProperties, // 'hidden' was typed as 'string'
-      }
-    : undefined;
+  const hasAudioProps = getDisableProps(hasAudio);
 
   return (
     <>
@@ -108,6 +113,7 @@ const Beat = () => {
 
   // TODO: Why tf are there two swipes listeners (for now) on my app
   // And how tf am I gonna handle stuff when I have to juggle all the different states
+  // Update: there are now 3 of these shits, what garbage...
   const handleSwipe = (direction: SwipeDirection) => {
     switch (direction) {
       case 'left': {
@@ -139,27 +145,18 @@ const Beat = () => {
         <Subject>finished!</Subject>
       </Instruction>
       <BigDivider />
-      {!!failed && (
-        <>
-          <Instruction>
-            <MdClose /> <Subject>swipe left</Subject> to retry {failed} failed
-            words
-          </Instruction>
-          <Divider />
-        </>
-      )}
+      <Instruction {...getDisableProps(failed)}>
+        <MdClose /> <Subject>swipe left</Subject> to retry {failed} failed words
+      </Instruction>
+      <Divider />
       <Instruction>
         <MdUpdate /> <Subject>swipe up</Subject> to restart
       </Instruction>
-      {!!passed && (
-        <>
-          <Divider />
-          <Instruction>
-            <MdCheck /> <Subject>swipe right</Subject> to retry {passed} passed
-            words
-          </Instruction>
-        </>
-      )}
+      <Divider />
+      <Instruction {...getDisableProps(passed)}>
+        <MdCheck /> <Subject>swipe right</Subject> to retry {passed} passed
+        words
+      </Instruction>
     </>
   );
 };
@@ -172,29 +169,35 @@ const Settings = () => {
 
   const dispatch = useAppDispatch();
 
+  const canDoFailed = failed && subject !== 'failed';
+  const canDoPassed = passed && subject !== 'passed';
+
+  const hasRemaining = subject !== 'remaining';
+  const canRestart = !!(passed || failed);
+
   // TODO: Ugh
   const handleSwipe = (direction: SwipeDirection) => {
     switch (direction) {
       case 'left': {
-        if (failed) {
+        if (canDoFailed) {
           dispatch(actions.doFailedList());
         }
         return;
       }
       case 'right': {
-        if (passed) {
+        if (canDoPassed) {
           dispatch(actions.doPassedList());
         }
         return;
       }
       case 'up': {
-        if (failed || passed) {
+        if (canRestart) {
           dispatch(actions.resetLists());
         }
         return;
       }
       case 'down': {
-        if (subject !== 'remaining') {
+        if (hasRemaining) {
           dispatch(actions.doRemainingList());
         }
         return;
@@ -213,29 +216,23 @@ const Settings = () => {
         <Subject>settings</Subject>
       </Instruction>
       <BigDivider />
-      {!!failed && (
-        <Instruction>
-          <MdClose /> <Subject>swipe left</Subject> to retry {failed} failed
-          words
-        </Instruction>
-      )}
-      {!!(failed || passed) && (
-        <Instruction>
-          <MdUpdate /> <Subject>swipe up</Subject> to restart
-        </Instruction>
-      )}
-      {!!passed && (
-        <Instruction>
-          <MdCheck /> <Subject>swipe right</Subject> to retry {passed} passed
-          words
-        </Instruction>
-      )}
-      {subject !== 'remaining' && (
-        <Instruction>
-          <MdList /> <Subject>swipe down</Subject> to return to main list,{' '}
-          {remaining} words
-        </Instruction>
-      )}
+      <Instruction {...getDisableProps(canDoFailed)}>
+        <MdClose /> <Subject>swipe left</Subject> to retry {failed} failed words
+      </Instruction>
+      <Divider />
+      <Instruction {...getDisableProps(canRestart)}>
+        <MdUpdate /> <Subject>swipe up</Subject> to restart
+      </Instruction>
+      <Divider />
+      <Instruction {...getDisableProps(canDoPassed)}>
+        <MdCheck /> <Subject>swipe right</Subject> to retry {passed} passed
+        words
+      </Instruction>
+      <Divider />
+      <Instruction {...getDisableProps(hasRemaining)}>
+        <MdList /> <Subject>swipe down</Subject> to return to main list,{' '}
+        {remaining} words
+      </Instruction>
     </>
   );
 };
