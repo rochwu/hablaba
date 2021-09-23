@@ -1,12 +1,14 @@
-import {CSSProperties, FC, Children, ReactElement} from 'react';
+import {FC, Children, ReactElement, CSSProperties} from 'react';
 
 import styled from '@emotion/styled';
+import {useSelector} from 'react-redux';
+
+import {useSpring, animated} from 'react-spring';
 
 import {MdSpaceBar, MdCheck, MdClose, MdUpdate, MdList} from 'react-icons/md';
 import {GiSoundWaves, GiHamburger} from 'react-icons/gi';
 import {CgCrown} from 'react-icons/cg';
 
-import {useSelector} from 'react-redux';
 import {
   selectAudioSource,
   selectIsRecording,
@@ -20,17 +22,17 @@ import {
 } from '../state';
 import {SwipeDirection, useSwipe} from '../useSwipe';
 
-const Container = styled.ul({
+const Ul = styled.ul({
   listStyleType: 'none',
 });
+
+const Li = styled(animated.li)({});
 
 const Centered = styled.span({
   verticalAlign: 'middle',
 });
 
-const Li = styled.li({});
-
-const Instruction: FC = ({children, ...props}) => {
+const Instruction: FC<{style: CSSProperties}> = ({children, ...props}) => {
   // Normalize for fragments
   const normal =
     Children.count(children) === 1
@@ -45,7 +47,9 @@ const Instruction: FC = ({children, ...props}) => {
     }
   });
 
-  return <Li {...props}>{elements}</Li>;
+  const style = useSpring(props.style);
+
+  return <Li style={style}>{elements}</Li>;
 };
 
 const Subject = styled.span({
@@ -67,6 +71,12 @@ const getDisableProps = (condition: any) => {
         color: `#f4f4f4`,
       },
       'aria-hidden': true,
+    };
+  } else {
+    return {
+      style: {
+        color: 'black',
+      },
     };
   }
 };
@@ -253,5 +263,5 @@ export const Instructions = () => {
       break;
   }
 
-  return <Container aria-label="app controls">{element}</Container>;
+  return <Ul aria-label="app controls">{element}</Ul>;
 };

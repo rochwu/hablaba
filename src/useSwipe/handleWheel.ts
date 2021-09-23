@@ -32,9 +32,6 @@ export const handleWheel = ({deltaY, deltaX}: WheelEvent) => {
     }
 
     notifySubscribers(direction);
-    lastDelta = 0;
-    lastIncreasing = false;
-    return;
   }
 
   lastIncreasing = increasing;

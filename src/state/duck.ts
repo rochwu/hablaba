@@ -20,6 +20,7 @@ const changeSubject = (subject: State['subject']) => {
     state.subject = subject;
     state[subject] = shuffle(state[subject]);
     state.status = 'ready';
+    state.audioSource = '';
   };
 };
 
@@ -70,6 +71,7 @@ export const {reducer, actions} = createSlice({
       state.passed = [];
       state.failed = [];
       state.status = 'ready';
+      state.audioSource = '';
     },
     changeStatus: (state, {payload}: PayloadAction<State['status']>) => {
       state.status = payload;
