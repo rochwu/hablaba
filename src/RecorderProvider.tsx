@@ -7,6 +7,7 @@ type Type = {
   stop: () => void;
 };
 
+// TODO: See how it fairs on Mobile Chrome
 const MIME_TYPE = 'audio/webm;codecs=opus';
 
 const RecorderContext = createContext<Type>({} as any);
@@ -28,7 +29,7 @@ export const RecorderProvider: FC<{recorder: MediaRecorder}> = ({
     stop: () => {
       if (recorder.state !== 'inactive') {
         recorder.stop();
-        dispatch(actions.stop(performance.now() - ellapsed.current));
+        dispatch(actions.stop((performance.now() - ellapsed.current) / 1000));
       }
     },
     start: () => {

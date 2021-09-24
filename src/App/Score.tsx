@@ -1,6 +1,6 @@
 import styled, {CSSObject} from '@emotion/styled';
 import {useSelector} from 'react-redux';
-import {selectFailedList, selectPassedList} from '../state';
+import {selectFailedList, selectPassedList, selectSubject} from '../state';
 
 const Container = styled.div({
   display: 'flex',
@@ -33,11 +33,20 @@ export const Score = () => {
   const passedList = useSelector(selectPassedList);
   const failedList = useSelector(selectFailedList);
 
+  const subject = useSelector(selectSubject);
+  const underline = {textDecoration: 'underline'};
+  const failedUnderlined = subject === 'failed' ? underline : undefined;
+  const passedUnderlined = subject === 'passed' ? underline : undefined;
+
   return (
     <Container>
-      <Left aria-label="fail count">{failedList.length}</Left>
+      <Left aria-label="fail count" style={failedUnderlined}>
+        {failedList.length}
+      </Left>
       <Divider />
-      <Right aria-label="pass count">{passedList.length}</Right>
+      <Right aria-label="pass count" style={passedUnderlined}>
+        {passedList.length}
+      </Right>
     </Container>
   );
 };

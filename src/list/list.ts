@@ -1,4 +1,4 @@
-export const list = [
+const rawList = [
   //Beginning
   'cat',
   'key',
@@ -305,3 +305,5 @@ export const list = [
   'played',
   'side',
 ];
+
+export const list = [...new Set(rawList)];

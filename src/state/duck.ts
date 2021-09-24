@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-import {shuffle} from '../list';
+import {shuffle, list} from '../list';
 
 import {State} from './types';
 
@@ -63,11 +63,7 @@ export const {reducer, actions} = createSlice({
     doRemainingList: changeSubject('remaining'),
     resetLists: (state) => {
       state.subject = 'remaining';
-      state.remaining = shuffle([
-        ...state.remaining,
-        ...state.failed,
-        ...state.passed,
-      ]);
+      state.remaining = shuffle(list);
       state.passed = [];
       state.failed = [];
       state.status = 'ready';
