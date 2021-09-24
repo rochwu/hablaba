@@ -14,7 +14,7 @@ const sharedStyle: CSSObject = {
 };
 
 const Left = styled.span(sharedStyle, {
-  justifyContent: 'flex-end',
+  justifyContent: 'flex-end', // Mobile Chrome didn't like `end`
   color: 'red',
 });
 

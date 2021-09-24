@@ -1,10 +1,11 @@
-import {useState, RefObject, useEffect, useCallback, useRef} from 'react';
+import {useState, RefObject, useEffect, useCallback} from 'react';
 import styled from '@emotion/styled';
 import {useSelector} from 'react-redux';
 
 import {useSpring, animated} from 'react-spring';
 
 import {selectDuration, selectWord} from '../state';
+import {useRefSelector} from '../useRefSelector';
 
 const Container = styled.div({
   display: 'flex',
@@ -53,11 +54,9 @@ export const AnimatedWord = ({percent}: {percent: number}) => {
 };
 
 export const Word = ({audioRef}: {audioRef: RefObject<HTMLAudioElement>}) => {
-  const durationFromState = useSelector(selectDuration);
   const [percent, setPercent] = useState(100);
 
-  const inaccurateDuration = useRef(durationFromState);
-  inaccurateDuration.current = durationFromState;
+  const inaccurateDuration = useRefSelector(selectDuration);
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
@@ -79,7 +78,7 @@ export const Word = ({audioRef}: {audioRef: RefObject<HTMLAudioElement>}) => {
         setPercent(100);
       }
     }
-  }, [audioRef]);
+  }, [audioRef, inaccurateDuration]);
 
   // Since we sometimes use inaccurate duration, we need to force 100% when ended
   const handleEnded = useCallback(() => {
