@@ -32,7 +32,16 @@ const Centered = styled.span({
   verticalAlign: 'middle',
 });
 
-const Instruction: FC<{style: CSSProperties}> = ({children, ...props}) => {
+const AnimatedInstruction: FC<{style: CSSProperties}> = ({
+  children,
+  ...props
+}) => {
+  const style = useSpring(props.style);
+
+  return <Li style={style}>{children}</Li>;
+};
+
+const Instruction: FC<{style?: CSSProperties}> = ({children, ...props}) => {
   // Normalize for fragments
   const normal =
     Children.count(children) === 1
@@ -47,9 +56,13 @@ const Instruction: FC<{style: CSSProperties}> = ({children, ...props}) => {
     }
   });
 
-  const style = useSpring(props.style);
-
-  return <Li style={style}>{elements}</Li>;
+  if (props.style) {
+    return (
+      <AnimatedInstruction style={props.style}>{elements}</AnimatedInstruction>
+    );
+  } else {
+    return <Li>{elements}</Li>;
+  }
 };
 
 const Subject = styled.span({
