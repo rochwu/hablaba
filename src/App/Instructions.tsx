@@ -41,7 +41,7 @@ const AnimatedInstruction: FC<{style: CSSProperties}> = ({
   return <Li style={style}>{children}</Li>;
 };
 
-const Instruction: FC<{style?: CSSProperties}> = ({children, ...props}) => {
+const Instruction: FC<{style?: CSSProperties}> = ({children, style}) => {
   // Normalize for fragments
   const normal =
     Children.count(children) === 1
@@ -56,10 +56,8 @@ const Instruction: FC<{style?: CSSProperties}> = ({children, ...props}) => {
     }
   });
 
-  if (props.style) {
-    return (
-      <AnimatedInstruction style={props.style}>{elements}</AnimatedInstruction>
-    );
+  if (style) {
+    return <AnimatedInstruction style={style}>{elements}</AnimatedInstruction>;
   } else {
     return <Li>{elements}</Li>;
   }
@@ -233,9 +231,7 @@ const Settings = () => {
   return (
     <>
       <Instruction>
-        <GiHamburger
-          style={{backgroundColor: '#fcfcfc', borderRadius: '1px'}}
-        />{' '}
+        <GiHamburger style={{color: '#EE851C', borderRadius: '1px'}} />{' '}
         <Subject>settings</Subject>
       </Instruction>
       <BigDivider />
