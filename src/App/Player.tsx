@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useRef} from 'react';
 import {useSelector} from 'react-redux';
+import {isTouchable} from '../isTouchable';
 
 import {
   actions,
@@ -60,8 +61,7 @@ export const Player = () => {
   useEffect(() => {
     const audio = ref.current;
 
-    // TODO: disable autoplay on mobile, I mean it's disabled, but disable the code
-    if (audio) {
+    if (audio && !isTouchable) {
       const autoplay = () => {
         audio.play();
       };

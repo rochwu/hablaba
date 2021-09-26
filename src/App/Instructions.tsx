@@ -108,7 +108,7 @@ const HowToRecord = (() => {
         <Instruction>
           {isRecording ? (
             <>
-              <MdTouchApp /> let go of to stop
+              <MdTouchApp /> let go to stop
             </>
           ) : (
             <>
