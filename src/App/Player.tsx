@@ -42,7 +42,10 @@ export const Player = () => {
 
             if (audio) {
               if (audio.paused) {
-                audio.play();
+                audio.play().catch((error) => {
+                  // TODO iOS is failing here on NotAllowedError AND NotSupportedError
+                  console.error(`audio.play`, error);
+                });
               } else {
                 audio.currentTime = 0;
               }
