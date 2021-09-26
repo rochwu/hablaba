@@ -1,6 +1,6 @@
 import {MutableRefObject} from 'react';
 
-import {SwipeDirection, SwipeHandler} from './types';
+import {SwipeAction, SwipeHandler} from './types';
 
 type Callback = MutableRefObject<SwipeHandler>;
 
@@ -27,6 +27,6 @@ export const withoutSubscribers = (method: () => void) => {
   }
 };
 
-export const notifySubscribers = (direction: SwipeDirection) => {
+export const notifySubscribers = (direction: SwipeAction) => {
   subscribers.forEach((subscriber) => subscriber.current(direction));
 };

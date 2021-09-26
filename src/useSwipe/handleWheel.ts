@@ -1,6 +1,6 @@
 import {throttle} from 'lodash';
 
-import {SwipeDirection} from './types';
+import {SwipeAction} from './types';
 import {notifySubscribers} from './state';
 
 let lastDelta = 0;
@@ -24,7 +24,7 @@ export const handleWheel = ({deltaY, deltaX}: WheelEvent) => {
 
   // When the curve start to increase, it should be the start of a new gesture
   if (lastIncreasing === false && increasing === true) {
-    let direction: SwipeDirection;
+    let direction: SwipeAction;
     if (absX >= absY) {
       direction = deltaX >= 0 ? 'left' : 'right';
     } else {
