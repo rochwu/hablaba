@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import {useKeyListener} from './useKeyListener';
+import {useRecord} from './useRecord';
 import {useBrowserOverrides} from './useBrowserOverrides';
 
 import {Player} from './Player';
@@ -18,7 +18,7 @@ const Container = styled.div({
 
 export const App = () => {
   useBrowserOverrides();
-  useKeyListener();
+  useRecord();
 
   return (
     <>

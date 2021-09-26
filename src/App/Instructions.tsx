@@ -5,7 +5,14 @@ import {useSelector} from 'react-redux';
 
 import {useSpring, animated} from 'react-spring';
 
-import {MdSpaceBar, MdCheck, MdClose, MdUpdate, MdList} from 'react-icons/md';
+import {
+  MdSpaceBar,
+  MdCheck,
+  MdClose,
+  MdUpdate,
+  MdList,
+  MdTouchApp,
+} from 'react-icons/md';
 import {GiSoundWaves, GiHamburger} from 'react-icons/gi';
 import {CgCrown} from 'react-icons/cg';
 
@@ -20,7 +27,8 @@ import {
   selectRemainingList,
   selectSubject,
 } from '../state';
-import {SwipeDirection, useSwipe} from '../useSwipe';
+import {SwipeAction, useSwipe} from '../useSwipe';
+import {isTouchable} from '../isTouchable';
 
 const Ul = styled.ul({
   listStyleType: 'none',
@@ -92,6 +100,43 @@ const getDisableProps = (condition: any) => {
   }
 };
 
+type HowToRecordProps = {isRecording: boolean};
+const HowToRecord = (() => {
+  if (isTouchable) {
+    return ({isRecording}: HowToRecordProps) => {
+      return (
+        <Instruction>
+          {isRecording ? (
+            <>
+              <MdTouchApp /> let go of to stop
+            </>
+          ) : (
+            <>
+              <MdTouchApp /> <Subject>long press</Subject> to record
+            </>
+          )}
+        </Instruction>
+      );
+    };
+  } else {
+    return ({isRecording}: HowToRecordProps) => {
+      return (
+        <Instruction>
+          {isRecording ? (
+            <>
+              <MdSpaceBar /> let go of <Subject>space</Subject> to stop
+            </>
+          ) : (
+            <>
+              <MdSpaceBar /> hold <Subject>space</Subject> to record
+            </>
+          )}
+        </Instruction>
+      );
+    };
+  }
+})();
+
 const Playing = () => {
   const hasAudio = !!useSelector(selectAudioSource);
   const isRecording = useSelector(selectIsRecording);
@@ -100,17 +145,7 @@ const Playing = () => {
 
   return (
     <>
-      <Instruction>
-        {isRecording ? (
-          <>
-            <MdSpaceBar /> let go of <Subject>space</Subject> to stop
-          </>
-        ) : (
-          <>
-            <MdSpaceBar /> hold <Subject>space</Subject> to record
-          </>
-        )}
-      </Instruction>
+      <HowToRecord isRecording={isRecording} />
       <Divider />
       <Instruction {...hasAudioProps}>
         <MdCheck /> <Subject>swipe right</Subject> to pass
@@ -135,7 +170,7 @@ const Beat = () => {
   // TODO: Why tf are there two swipes listeners (for now) on my app
   // And how tf am I gonna handle stuff when I have to juggle all the different states
   // Update: there are now 3 of these shits, what garbage...
-  const handleSwipe = (direction: SwipeDirection) => {
+  const handleSwipe = (direction: SwipeAction) => {
     switch (direction) {
       case 'left': {
         if (failed) {
@@ -197,7 +232,7 @@ const Settings = () => {
   const canRestart = !!(passed || failed);
 
   // TODO: Ugh
-  const handleSwipe = (direction: SwipeDirection) => {
+  const handleSwipe = (direction: SwipeAction) => {
     switch (direction) {
       case 'left': {
         if (canDoFailed) {

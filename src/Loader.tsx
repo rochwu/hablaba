@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import styled from '@emotion/styled';
 
 import {useAppDispatch} from './state';
@@ -7,33 +7,29 @@ import {RecorderProvider} from './RecorderProvider';
 import {App} from './App';
 
 const Container = styled.div({
-  aspectRatio: '9 / 16',
-  height: '100vh', // Used to enforce aspect ratio
+  width: `100%`,
   margin: `0 auto`,
   backgroundColor: 'white', // TODO: Maybe think about night mode
 });
 
-const LoadFailed = () => {
-  return (
-    <div style={{margin: '1em'}}>
-      <span>
-        This is the big loading message, either something fucked up pretty bad
-        or I'm not on Chrome or I don't even know what is going on, but anyways
-        tough luck. Actually, maybe one of my dependencies got borked. Oh, did
-        you allow mic?
-      </span>
-    </div>
-  );
-};
+const ErrorMessage = styled.div({
+  margin: `1em`,
+});
+
+const Emoji: FC = ({children, ...props}) => (
+  <span {...props} role="img">
+    {children}
+  </span>
+);
 
 const MediaLoader = () => {
   const dispatch = useAppDispatch();
 
   const [recorder, setRecorder] = useState<MediaRecorder | undefined>();
-  const [loaded, setLoaded] = useState(false);
 
-  // TODO: Feature checks when I am less lazy
-  const hasChrome = navigator.userAgent.indexOf('Chrome') !== -1;
+  const [status, setStatus] = useState<
+    'loading' | 'ready' | 'unsupported' | 'declined'
+  >('loading');
 
   useEffect(() => {
     try {
@@ -44,37 +40,43 @@ const MediaLoader = () => {
           const recorder = new MediaRecorder(stream);
 
           setRecorder(recorder);
+          setStatus('ready');
         })
-        .catch(() => {
-          console.error('Oi 🤌 why did you come for if not for speech');
+        .catch((error) => {
+          console.error(error);
+          setStatus('declined');
         });
     } catch {
-      console.error(`I wouldn't know why I failed here to be honest 🤷`);
+      setStatus('unsupported');
     }
   }, [dispatch]);
 
-  // TODO: Maybe add an actual loading screen
-  // Mostly used to skip the loading screen
-  useEffect(() => {
-    setTimeout(() => {
-      setLoaded(true);
-    }, 500);
-  }, []);
-
-  // TODO: Finish the three states here, I'd like to make a loading screen
-  if (loaded) {
-    if (hasChrome && recorder) {
+  switch (status) {
+    case 'loading':
+      return <></>;
+    case 'ready':
       return (
-        <RecorderProvider recorder={recorder}>
+        <RecorderProvider recorder={recorder!}>
           <App />
         </RecorderProvider>
       );
-    } else {
-      return <LoadFailed />;
-    }
+    case 'declined':
+      return (
+        <ErrorMessage>
+          Oi <Emoji aria-hidden={true}>🤌</Emoji> why would you be here and not
+          allow mic
+        </ErrorMessage>
+      );
+    case 'unsupported':
+    default:
+      return (
+        <ErrorMessage>
+          {/* eslint-disable jsx-a11y/accessible-emoji */}
+          <Emoji aria-label="shrugs">🤷</Emoji> are you on Chrome? Cuz it only
+          works on Chrome, sorta...
+        </ErrorMessage>
+      );
   }
-
-  return <></>;
 };
 
 export const Loader = () => {

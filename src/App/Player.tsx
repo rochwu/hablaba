@@ -9,7 +9,7 @@ import {
 } from '../state';
 import {useRefSelector} from '../useRefSelector';
 
-import {SwipeDirection, useSwipe} from '../useSwipe';
+import {SwipeAction, useSwipe} from '../useSwipe';
 import {Word} from './Word';
 
 export const Player = () => {
@@ -25,7 +25,7 @@ export const Player = () => {
   const ref = useRef<HTMLAudioElement>(null);
 
   const handleSwipe = useCallback(
-    (direction: SwipeDirection) => {
+    (direction: SwipeAction) => {
       if (ready.current && !disabled.current) {
         switch (direction) {
           case 'left': {

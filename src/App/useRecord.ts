@@ -1,12 +1,33 @@
-import {useEffect} from 'react';
+import {useCallback, useEffect} from 'react';
 
 import {useRecorder} from '../RecorderProvider';
 import {selectIsReady} from '../state';
 import {useRefSelector} from '../useRefSelector';
+import {SwipeAction, useSwipe} from '../useSwipe';
 
-export const useKeyListener = () => {
+export const useRecord = () => {
   const {start, stop} = useRecorder();
   const canRecord = useRefSelector(selectIsReady);
+
+  const handleTouch = useCallback(
+    (action: SwipeAction) => {
+      if (canRecord.current) {
+        switch (action) {
+          case 'pressed': {
+            start();
+            return;
+          }
+          case 'released': {
+            stop();
+            return;
+          }
+        }
+      }
+    },
+    [canRecord, start, stop],
+  );
+
+  useSwipe(handleTouch);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
