@@ -1,6 +1,5 @@
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback, useRef} from 'react';
 import {useSelector} from 'react-redux';
-import {isTouchable} from '../isTouchable';
 
 import {
   actions,
@@ -43,8 +42,9 @@ export const Player = () => {
             if (audio) {
               if (audio.paused) {
                 audio.play().catch((error) => {
-                  // TODO iOS is failing here on NotAllowedError AND NotSupportedError
-                  console.error(`audio.play`, error);
+                  // TODO: A way to report error on iOS
+                  // TODO: Better yet, start the app with an iOS challenge
+                  console.log(error);
                 });
               } else {
                 audio.currentTime = 0;
@@ -61,24 +61,16 @@ export const Player = () => {
 
   useSwipe(handleSwipe);
 
-  useEffect(() => {
-    const audio = ref.current;
-
-    if (audio && !isTouchable) {
-      const autoplay = () => {
-        audio.play();
-      };
-
-      audio.addEventListener('loadeddata', autoplay);
-      return () => {
-        audio.removeEventListener('loadeddata', autoplay);
-      };
-    }
-  }, []);
-
+  /**
+   * Note on iOS interactions
+   * The autoPlay attribute works as long as the user has interacted with the site
+   * ie: the first recording doesn't work but any subsequent will work
+   * onLoadedData doesn't work "on loaded data" but only after the user interacts
+   * then does it load data
+   */
   return (
     <>
-      <audio ref={ref} src={audioSource} />
+      <audio ref={ref} autoPlay src={audioSource} />
       <Word audioRef={ref} />
     </>
   );

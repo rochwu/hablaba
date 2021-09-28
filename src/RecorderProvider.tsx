@@ -95,7 +95,7 @@ export const RecorderProvider: FC<{recorder: MediaRecorder}> = ({
 
   useEffect(() => {
     recorder.ondataavailable = ({data}) => {
-      const audioSource = window.URL.createObjectURL(
+      const audioSource = URL.createObjectURL(
         new Blob([data], {type: MIME_TYPE}),
       );
 
