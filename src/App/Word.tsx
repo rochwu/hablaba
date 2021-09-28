@@ -10,13 +10,12 @@ import {useRefSelector} from '../useRefSelector';
 const Container = styled.div({
   display: 'flex',
   justifyContent: 'center',
-  marginTop: `2em`,
+  alignItems: 'flex-end', // iOS
+  height: `120px`, // Golden ratio of 390 is 240
   marginBottom: `7px`,
 });
 
 const AnimatedText = styled(animated.span)({
-  fontSize: `4em`,
-
   backgroundClip: 'text', // Makes backgroundImage only affect text
   WebkitTextStroke: '1px black',
   WebkitTextFillColor: 'transparent', // Makes backgroundImage seeing through text
@@ -50,7 +49,10 @@ export const AnimatedWord = ({percent}: {percent: number}) => {
     api.start(toStyle());
   }
 
-  return <AnimatedText style={style}>{word || <>&nbsp;</>}</AnimatedText>;
+  // Trial and error with widest character in font
+  const fontSize = word.length > 7 ? `3em` : `4em`;
+
+  return <AnimatedText style={{...style, fontSize}}>{word}</AnimatedText>;
 };
 
 export const Word = ({audioRef}: {audioRef: RefObject<HTMLAudioElement>}) => {

@@ -7,9 +7,10 @@ import {RecorderProvider} from './RecorderProvider';
 import {App} from './App';
 
 const Container = styled.div({
-  width: `100%`,
   margin: `0 auto`,
   backgroundColor: 'white', // TODO: Maybe think about night mode
+  width: `390px`, // my phone
+  height: `100vh`,
 });
 
 const ErrorMessage = styled.div({
