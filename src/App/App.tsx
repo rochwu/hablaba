@@ -21,6 +21,7 @@ export const App = () => {
   useBrowserOverrides();
   useRecord();
 
+  // TODO: I would like better separation between Player and Instructions
   const audioRef = createRef<HTMLAudioElement>();
 
   return (

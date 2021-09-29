@@ -9,7 +9,6 @@ export const useRefSelector = <S = any, R = any>(selector: (state: S) => R) => {
 
   useSelector((state: S) => {
     ref.current = selector(state);
-    return;
   });
 
   return ref;

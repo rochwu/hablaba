@@ -8,7 +8,6 @@ import {subscribe, withoutSubscribers} from './state';
 import {throttledHandleWheel} from './handleWheel';
 import {handleTouchStart, handleTouchMove, handleTouchEnd} from './handleTouch';
 
-// TODO: touchstart/move/end for iOS
 export const useSwipe = (handler: SwipeHandler) => {
   const callback = useRef(handler);
 

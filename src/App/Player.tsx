@@ -10,7 +10,6 @@ const isRef = (ref: any): ref is MutableRefObject<HTMLAudioElement> => {
   return !!ref.current;
 };
 
-// TODO: Be less of a chum and do forwardedRef right
 export const Player = forwardRef<HTMLAudioElement>((_, ref) => {
   const audioSource = useSelector(selectAudioSource);
 

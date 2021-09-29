@@ -147,41 +147,44 @@ const Playing = ({audioRef}: Props) => {
 
   const dispatch = useAppDispatch();
 
-  // TODO: Move this out to a central location
   const handleSwipe = (direction: SwipeAction) => {
-    if (hasAudio) {
-      switch (direction) {
-        case 'left': {
-          dispatch(actions.fail());
-          return;
-        }
-        case 'right': {
-          dispatch(actions.pass());
-          return;
-        }
-        case 'up': {
-          const audio = audioRef.current;
+    switch (direction) {
+      case 'up': {
+        const audio = audioRef.current;
 
-          if (audio) {
-            if (audio.paused) {
-              audio.play();
-              // audio.play().catch((error) => {
-              //   // TODO: A way to report error on iOS
-              //   // TODO: Better yet, start the app with an iOS challenge
-              //   console.log(error);
-              // });
-            } else {
-              audio.currentTime = 0;
-            }
+        if (audio) {
+          if (audio.paused) {
+            audio.play();
+            // audio.play().catch((error) => {
+            //   // TODO: A way to report error on iOS
+            //   // TODO: Better yet, start the app with an iOS challenge
+            //   console.log(error);
+            // });
+          } else {
+            audio.currentTime = 0;
           }
-
-          return;
         }
+
+        return;
+      }
+      case 'left': {
+        dispatch(actions.fail());
+        return;
+      }
+      case 'right': {
+        dispatch(actions.pass());
+        return;
       }
     }
   };
 
-  useSwipe(handleSwipe);
+  const tryHandleSwipe = (action: SwipeAction) => {
+    if (hasAudio) {
+      handleSwipe(action);
+    }
+  };
+
+  useSwipe(tryHandleSwipe);
 
   const hasAudioProps = getDisableProps(hasAudio);
 
