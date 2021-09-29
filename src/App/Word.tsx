@@ -1,11 +1,13 @@
-import {useState, RefObject, useEffect, useCallback} from 'react';
 import styled from '@emotion/styled';
 import {useSelector} from 'react-redux';
 
 import {useSpring, animated} from 'react-spring';
 
-import {selectDuration, selectWord} from '../state';
-import {useRefSelector} from '../useRefSelector';
+import {selectWord} from '../state';
+
+type Props = {
+  percent: number;
+};
 
 const Container = styled.div({
   display: 'flex',
@@ -38,7 +40,7 @@ const toStyle = (percent: number = 100) => {
   };
 };
 
-export const AnimatedWord = ({percent}: {percent: number}) => {
+export const Word = ({percent}: Props) => {
   const word = useSelector(selectWord);
 
   const [style, api] = useSpring(() => toStyle());
@@ -52,58 +54,9 @@ export const AnimatedWord = ({percent}: {percent: number}) => {
   // Trial and error with widest character in font
   const fontSize = word.length > 7 ? `3em` : `4em`;
 
-  return <AnimatedText style={{...style, fontSize}}>{word}</AnimatedText>;
-};
-
-export const Word = ({audioRef}: {audioRef: RefObject<HTMLAudioElement>}) => {
-  const [percent, setPercent] = useState(100);
-
-  const inaccurateDuration = useRefSelector(selectDuration);
-
-  const handleTimeUpdate = useCallback(() => {
-    const audio = audioRef.current;
-
-    // When a new source is fed, currentTime is changed to 0 and thus "change"
-    // To ignore this, we check for the proper ready state
-    if (audio) {
-      if (audio.readyState !== 0) {
-        const {currentTime, duration: accurateDuration} = audio;
-        // Sometimes the API is unable to return duration, so we use the one on redux
-        const duration = Number.isFinite(accurateDuration)
-          ? accurateDuration
-          : inaccurateDuration.current;
-
-        const rawPercent = (currentTime / duration) * 100;
-
-        setPercent(rawPercent);
-      } else {
-        setPercent(100);
-      }
-    }
-  }, [audioRef, inaccurateDuration]);
-
-  // Since we sometimes use inaccurate duration, we need to force 100% when ended
-  const handleEnded = useCallback(() => {
-    setPercent(100);
-  }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-
-    if (audio) {
-      audio.addEventListener('timeupdate', handleTimeUpdate);
-      audio.addEventListener('ended', handleEnded);
-
-      return () => {
-        audio.removeEventListener('timeupdate', handleTimeUpdate);
-        audio.removeEventListener('ended', handleEnded);
-      };
-    }
-  }, [audioRef, handleTimeUpdate, handleEnded]);
-
   return (
     <Container>
-      <AnimatedWord percent={percent} />
+      <AnimatedText style={{...style, fontSize}}>{word}</AnimatedText>
     </Container>
   );
 };

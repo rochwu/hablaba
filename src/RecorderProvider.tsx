@@ -7,8 +7,6 @@ type Type = {
   stop: () => void;
 };
 
-// TODO: See how it fairs on Mobile Chrome
-// const MIME_TYPE = 'audio/webm;codecs=opus';
 const MIME_TYPE = 'audio/mpeg';
 
 const RecorderContext = createContext<Type>({} as any);

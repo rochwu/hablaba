@@ -1,4 +1,4 @@
-import {FC, Children, ReactElement, CSSProperties} from 'react';
+import {FC, Children, ReactElement, CSSProperties, RefObject} from 'react';
 
 import styled from '@emotion/styled';
 import {useSelector} from 'react-redux';
@@ -29,6 +29,10 @@ import {
 } from '../state';
 import {SwipeAction, useSwipe} from '../useSwipe';
 import {isTouchable} from '../isTouchable';
+
+type Props = {
+  audioRef: RefObject<HTMLAudioElement>;
+};
 
 const Ul = styled.ul({
   listStyleType: 'none',
@@ -137,9 +141,47 @@ const HowToRecord = (() => {
   }
 })();
 
-const Playing = () => {
+const Playing = ({audioRef}: Props) => {
   const hasAudio = !!useSelector(selectAudioSource);
   const isRecording = useSelector(selectIsRecording);
+
+  const dispatch = useAppDispatch();
+
+  // TODO: Move this out to a central location
+  const handleSwipe = (direction: SwipeAction) => {
+    if (hasAudio) {
+      switch (direction) {
+        case 'left': {
+          dispatch(actions.fail());
+          return;
+        }
+        case 'right': {
+          dispatch(actions.pass());
+          return;
+        }
+        case 'up': {
+          const audio = audioRef.current;
+
+          if (audio) {
+            if (audio.paused) {
+              audio.play();
+              // audio.play().catch((error) => {
+              //   // TODO: A way to report error on iOS
+              //   // TODO: Better yet, start the app with an iOS challenge
+              //   console.log(error);
+              // });
+            } else {
+              audio.currentTime = 0;
+            }
+          }
+
+          return;
+        }
+      }
+    }
+  };
+
+  useSwipe(handleSwipe);
 
   const hasAudioProps = getDisableProps(hasAudio);
 
@@ -167,9 +209,6 @@ const Beat = () => {
 
   const dispatch = useAppDispatch();
 
-  // TODO: Why tf are there two swipes listeners (for now) on my app
-  // And how tf am I gonna handle stuff when I have to juggle all the different states
-  // Update: there are now 3 of these shits, what garbage...
   const handleSwipe = (direction: SwipeAction) => {
     switch (direction) {
       case 'left': {
@@ -228,10 +267,9 @@ const Settings = () => {
   const canDoFailed = failed && subject !== 'failed';
   const canDoPassed = passed && subject !== 'passed';
 
-  const hasRemaining = subject !== 'remaining';
+  const hasRemaining = remaining && subject !== 'remaining';
   const canRestart = !!(passed || failed);
 
-  // TODO: Ugh
   const handleSwipe = (direction: SwipeAction) => {
     switch (direction) {
       case 'left': {
@@ -291,13 +329,15 @@ const Settings = () => {
   );
 };
 
-export const Instructions = () => {
+// TODO: Rethink the word "instructions", it contains the instruction view but also the logic on whether
+// an instruction and its corresponding gesture is available
+export const Instructions = (props: Props) => {
   const status = useSelector(selectStatus);
 
   let element;
   switch (status) {
     case 'ready':
-      element = <Playing />;
+      element = <Playing {...props} />;
       break;
     case 'completed':
       element = <Beat />;

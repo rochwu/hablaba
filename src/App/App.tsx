@@ -1,3 +1,4 @@
+import {createRef} from 'react';
 import styled from '@emotion/styled';
 
 import {useRecord} from './useRecord';
@@ -20,14 +21,16 @@ export const App = () => {
   useBrowserOverrides();
   useRecord();
 
+  const audioRef = createRef<HTMLAudioElement>();
+
   return (
     <>
       <Container>
         <Settings />
         <REC />
-        <Player />
+        <Player ref={audioRef} />
         <Score />
-        <Instructions />
+        <Instructions audioRef={audioRef} />
       </Container>
       <System />
     </>

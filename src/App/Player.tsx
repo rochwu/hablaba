@@ -1,65 +1,49 @@
-import {useCallback, useRef} from 'react';
+import {forwardRef, useCallback, useState, MutableRefObject} from 'react';
 import {useSelector} from 'react-redux';
 
-import {
-  actions,
-  selectAudioSource,
-  selectIsReady,
-  useAppDispatch,
-} from '../state';
+import {selectAudioSource, selectDuration} from '../state';
 import {useRefSelector} from '../useRefSelector';
 
-import {SwipeAction, useSwipe} from '../useSwipe';
 import {Word} from './Word';
 
-export const Player = () => {
+const isRef = (ref: any): ref is MutableRefObject<HTMLAudioElement> => {
+  return !!ref.current;
+};
+
+// TODO: Be less of a chum and do forwardedRef right
+export const Player = forwardRef<HTMLAudioElement>((_, ref) => {
   const audioSource = useSelector(selectAudioSource);
-  const ready = useRefSelector(selectIsReady);
 
-  const dispatch = useAppDispatch();
+  const [percent, setPercent] = useState(100);
 
-  // Prevents multiple dispatches since wheel events are sensitive
-  const disabled = useRef(!audioSource);
-  disabled.current = !audioSource;
+  const inaccurateDuration = useRefSelector(selectDuration);
 
-  const ref = useRef<HTMLAudioElement>(null);
+  const handleTimeUpdate = useCallback(() => {
+    const audio = isRef(ref) && ref.current;
 
-  const handleSwipe = useCallback(
-    (direction: SwipeAction) => {
-      if (ready.current && !disabled.current) {
-        switch (direction) {
-          case 'left': {
-            dispatch(actions.fail());
-            return;
-          }
-          case 'right': {
-            dispatch(actions.pass());
-            return;
-          }
-          case 'up': {
-            const audio = ref.current;
+    // When a new source is fed, currentTime is changed to 0 and thus "change"
+    // To ignore this, we check for the proper ready state
+    if (audio) {
+      if (audio.readyState !== 0) {
+        const {currentTime, duration: accurateDuration} = audio;
+        // Sometimes the API is unable to return duration, so we use the one on redux
+        const duration = Number.isFinite(accurateDuration)
+          ? accurateDuration
+          : inaccurateDuration.current;
 
-            if (audio) {
-              if (audio.paused) {
-                audio.play().catch((error) => {
-                  // TODO: A way to report error on iOS
-                  // TODO: Better yet, start the app with an iOS challenge
-                  console.log(error);
-                });
-              } else {
-                audio.currentTime = 0;
-              }
-            }
+        const rawPercent = (currentTime / duration) * 100;
 
-            return;
-          }
-        }
+        setPercent(rawPercent);
+      } else {
+        setPercent(100);
       }
-    },
-    [ready, dispatch],
-  );
+    }
+  }, [ref, inaccurateDuration]);
 
-  useSwipe(handleSwipe);
+  // Since we sometimes use inaccurate duration, we need to force 100% when ended
+  const handleEnded = useCallback(() => {
+    setPercent(100);
+  }, []);
 
   /**
    * Note on iOS interactions
@@ -70,8 +54,14 @@ export const Player = () => {
    */
   return (
     <>
-      <audio ref={ref} autoPlay src={audioSource} />
-      <Word audioRef={ref} />
+      <audio
+        ref={ref}
+        autoPlay
+        src={audioSource}
+        onTimeUpdate={handleTimeUpdate}
+        onEnded={handleEnded}
+      />
+      <Word percent={percent} />
     </>
   );
-};
+});
