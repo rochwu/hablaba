@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/hablaba/static/js/main.ea0e6f42.chunk.js",
-    "main.js.map": "/hablaba/static/js/main.ea0e6f42.chunk.js.map",
+    "main.js": "/hablaba/static/js/main.f4f5ce82.chunk.js",
+    "main.js.map": "/hablaba/static/js/main.f4f5ce82.chunk.js.map",
     "runtime-main.js": "/hablaba/static/js/runtime-main.d9ab55c6.js",
     "runtime-main.js.map": "/hablaba/static/js/runtime-main.d9ab55c6.js.map",
     "static/js/2.02d306ec.chunk.js": "/hablaba/static/js/2.02d306ec.chunk.js",
@@ -12,6 +12,6 @@
   "entrypoints": [
     "static/js/runtime-main.d9ab55c6.js",
     "static/js/2.02d306ec.chunk.js",
-    "static/js/main.ea0e6f42.chunk.js"
+    "static/js/main.f4f5ce82.chunk.js"
   ]
 }
